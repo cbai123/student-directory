@@ -18,24 +18,24 @@ def input_students
   # create an empty array
   students = []
   # get the first name
-  name = gets.chomp
+  name = gets.strip
   # loop while name isn't empty
   while !name.empty? do
     while true do
-      puts "Which cohort?"; cohort = gets.chomp.downcase.to_sym
+      puts "Which cohort?"; cohort = gets.strip.downcase.to_sym
       if cohort.empty? || months.include?(cohort) then break end
     end
     cohort = :november if cohort.empty?
     puts "Enter a hobby, country of birth, height. Or leave blank"
-    puts "Hobby: "; hobby = gets.chomp
-    puts "Country of birth: "; birth = gets.chomp
-    puts "Height: "; height = gets.chomp
+    puts "Hobby: "; hobby = gets.strip
+    puts "Country of birth: "; birth = gets.strip
+    puts "Height: "; height = gets.strip
     # push student hash to student array
     students << { name: name, cohort: cohort, hobby: hobby, birth: birth, height: height }
     students.length == 1 ? (puts "now we have #{students.count} student") : (puts "now we have #{students.count} students")
     # get next name
     puts "Enter name:"
-    name = gets.chomp
+    name = gets.gsub!("\n","")
   end
   #return students
   students
