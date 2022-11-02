@@ -17,7 +17,7 @@ def input_students
     cohort = :november if cohort.empty?
 
     # push student hash to student array
-    @students << { name: name, cohort: cohort }
+    add_student(name,cohort)
     @students.length == 1 ? (puts "now we have #{@students.count} student") : (puts "now we have #{@students.count} students")
 
     # get next name
@@ -96,6 +96,10 @@ def print_footer
   end
 end
 
+def add_student(name,cohort)
+  @students << {name: name, cohort: cohort.to_sym}
+end
+
 def try_load_students
   filename = ARGV.first
   return if filename.nil?
@@ -109,7 +113,7 @@ def load_students(filename = "students.csv")
   file = File.open(filename,"r")
   file.readlines.each { |line| 
     name, cohort = line.chomp.split(",")
-    @students << {name: name, cohort: cohort.to_sym}
+    add_student(name,cohort)
   }
   file.close
 end
