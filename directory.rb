@@ -6,12 +6,12 @@ def input_students
   puts "To finish, just hit return with the name field blank"
 
   # get the first name
-  name = gets.strip
+  name = STDIN.gets.strip
 
   # loop while name isn't empty
   while !name.empty? do
     while true do
-      puts "Which cohort?"; cohort = gets.strip.downcase.to_sym
+      puts "Which cohort?"; cohort = STDIN.gets.strip.downcase.to_sym
       if cohort.empty? || months.include?(cohort) then break end
     end
     cohort = :november if cohort.empty?
@@ -22,14 +22,14 @@ def input_students
 
     # get next name
     puts "Enter name:"
-    name = gets.gsub!("\n","")
+    name = STDIN.gets.chomp
   end
 end
 
 def interactive_menu
   loop do
     print_menu
-    process(gets.chomp.to_i)
+    process(STDIN.gets.chomp.to_i)
   end
 end
 
@@ -81,7 +81,7 @@ def print_students_list
     i = 0
     puts "#{cohort}:\n".center(50)
     while i < names.length
-      puts names[0].center(50)
+      puts names[i].center(50)
       i += 1
     end
     puts "---".center(50)
@@ -96,8 +96,17 @@ def print_footer
   end
 end
 
-def load_students
-  file = File.open("students.csv","r")
+def try_load_students
+  filename = ARGV.first
+  return if filename.nil?
+  if File.exist?(filename)
+    load_students(filename)
+    puts "Loaded #{@students.count} students from #{filename}"
+  end
+end
+
+def load_students(filename = "students.csv")
+  file = File.open(filename,"r")
   file.readlines.each { |line| 
     name, cohort = line.chomp.split(",")
     @students << {name: name, cohort: cohort.to_sym}
@@ -117,4 +126,5 @@ def save_students
   file.close
 end
 
+try_load_students
 interactive_menu
