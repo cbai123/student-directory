@@ -1,50 +1,120 @@
+@students = []
+
 def input_students
+  months = [:january, :february, :march, :april, :may, :june, :july, :august, :september, :october, :november, :december]
   puts "Please enter the names of the students"
-  puts "To finish, just hit return twice"
-  # create an empty array
-  students = []
+  puts "To finish, just hit return with the name field blank"
+
   # get the first name
-  name = gets.chomp
+  name = gets.strip
+
   # loop while name isn't empty
   while !name.empty? do
-    puts "Enter a hobby, country of birth, height. Or leave blank"
-    puts "Hobby: "; hobby = gets.strip
-    puts "Country of birth: "; birth = gets.strip
-    puts "Height: "; height = gets.strip
+    while true do
+      puts "Which cohort?"; cohort = gets.strip.downcase.to_sym
+      if cohort.empty? || months.include?(cohort) then break end
+    end
+    cohort = :november if cohort.empty?
+
     # push student hash to student array
-    students << { name: name, cohort: :november, hobby: hobby, birth: birth, height: height}
-    puts "now we have #{students.count} students"
+    @students << { name: name, cohort: cohort }
+    @students.length == 1 ? (puts "now we have #{@students.count} student") : (puts "now we have #{@students.count} students")
+
     # get next name
-    name = gets.chomp
+    puts "Enter name:"
+    name = gets.gsub!("\n","")
   end
-  #return students
-  students
+end
+
+def interactive_menu
+  loop do
+    print_menu
+    process(gets.chomp.to_i)
+  end
+end
+
+def print_menu
+  puts "1. Input the students"
+  puts "2. Show the students"
+  puts "3. Save the list to students.csv"
+  puts "4. Load the list from students.csv"
+  puts "9. Exit"
+end
+
+def show_students
+  print_header
+  print_students_list
+  print_footer
+end
+
+def process(selection)
+  case selection
+  when 1
+    input_students
+  when 2
+    if !@students.empty?
+      show_students
+    end
+  when 3
+    save_students
+  when 4
+    load_students
+  when 9
+    exit
+  else
+    puts "I don't know what you mean. Please try again."
+  end
 end
 
 def print_header
-  puts "The students of Villains Academy"
-  puts "-------------"
+  puts "The students of Villains Academy".center(50)
+  puts "-------------".center(50)
 end
 
-def print(names)
-  puts "Would you like to search for students whose name: begins with a specific letter (1), is less than 12 characters (2), or print all names (3)?"
-  answer = gets.chomp.to_i
-  if answer == 1
-    puts "Enter a letter"
-    letter = gets.chomp
-    names.each_with_index { |name,index| if name[:name][0] == letter then puts "#{index + 1}. #{name[:name]} (#{name[:cohort]} cohort)" end }
-  elsif answer = 2
-    names.each_with_index { |name,index| if name[:name].length  < 12 then puts "#{index + 1}. #{name[:name]} (#{name[:cohort]} cohort)" end }
+def print_students_list
+  names_sorted = {}
+  @students.map { |name| 
+    if names_sorted[name[:cohort]].nil? then names_sorted[name[:cohort]] = [] end
+    names_sorted[name[:cohort]] << name[:name]
+    }
+  names_sorted.each{ |cohort,names| 
+    i = 0
+    puts "#{cohort}:\n".center(50)
+    while i < names.length
+      puts names[0].center(50)
+      i += 1
+    end
+    puts "---".center(50)
+  }
+end
+
+def print_footer
+  if @students.length == 1
+    puts "Overall, we have #{@students.count} great student".center(50)
   else
-    names.each_with_index { |name,index| puts "#{index + 1}. #{name[:name]} (#{name[:cohort]} cohort)" }
+    puts "Overall, we have #{@students.count} great students".center(50)
   end
 end
 
-def print_footer(names)
-  puts "Overall, we have #{names.count} great students"
+def load_students
+  file = File.open("students.csv","r")
+  file.readlines.each { |line| 
+    name, cohort = line.chomp.split(",")
+    @students << {name: name, cohort: cohort.to_sym}
+  }
+  file.close
 end
 
-students = input_students
-print_header
-print(students)
-print_footer(students)
+def save_students
+  # open the file for writing
+  file = File.open("students.csv", "w")
+  # iterate over the array of students
+  @students.each { |student|
+    student_data = [student[:name], student[:cohort]]
+    csv_line = student_data.join(",")
+    file.puts csv_line
+  }
+  file.close
+end
+
+interactive_menu
