@@ -1,24 +1,13 @@
+@students = []
+
 def input_students
-  months = [
-    :january,
-    :february,
-    :march,
-    :april,
-    :may,
-    :june,
-    :july,
-    :august,
-    :september,
-    :october,
-    :november,
-    :december
-  ]
+  months = [:january, :february, :march, :april, :may, :june, :july, :august, :september, :october, :november, :december]
   puts "Please enter the names of the students"
   puts "To finish, just hit return with the name field blank"
-  # create an empty array
-  students = []
+
   # get the first name
   name = gets.strip
+
   # loop while name isn't empty
   while !name.empty? do
     while true do
@@ -26,19 +15,49 @@ def input_students
       if cohort.empty? || months.include?(cohort) then break end
     end
     cohort = :november if cohort.empty?
-    puts "Enter a hobby, country of birth, height. Or leave blank"
-    puts "Hobby: "; hobby = gets.strip
-    puts "Country of birth: "; birth = gets.strip
-    puts "Height: "; height = gets.strip
+
     # push student hash to student array
-    students << { name: name, cohort: cohort, hobby: hobby, birth: birth, height: height }
-    students.length == 1 ? (puts "now we have #{students.count} student") : (puts "now we have #{students.count} students")
+    @students << { name: name, cohort: cohort }
+    @students.length == 1 ? (puts "now we have #{@students.count} student") : (puts "now we have #{@students.count} students")
+
     # get next name
     puts "Enter name:"
     name = gets.gsub!("\n","")
   end
-  #return students
-  students
+end
+
+def interactive_menu
+  loop do
+    print_menu
+    process(gets.chomp.to_i)
+  end
+end
+
+def print_menu
+  puts "1. Input the students"
+  puts "2. Show the students"
+  puts "9. Exit"
+end
+
+def show_students
+  print_header
+  print_students_list
+  print_footer
+end
+
+def process(selection)
+  case selection
+  when 1
+    input_students
+  when 2
+    if !@students.empty?
+      show_students
+    end
+  when 9
+    exit
+  else
+    puts "I don't know what you mean. Please try again."
+  end
 end
 
 def print_header
@@ -46,9 +65,9 @@ def print_header
   puts "-------------".center(50)
 end
 
-def print(names)
+def print_students_list
   names_sorted = {}
-  names.map { |name| 
+  @students.map { |name| 
     if names_sorted[name[:cohort]].nil? then names_sorted[name[:cohort]] = [] end
     names_sorted[name[:cohort]] << name[:name]
     }
@@ -63,17 +82,12 @@ def print(names)
   }
 end
 
-def print_footer(names)
-  if names.length == 1
-    puts "Overall, we have #{names.count} great student".center(50)
+def print_footer
+  if @students.length == 1
+    puts "Overall, we have #{@students.count} great student".center(50)
   else
-    puts "Overall, we have #{names.count} great students".center(50)
+    puts "Overall, we have #{@students.count} great students".center(50)
   end
 end
 
-students = input_students
-if !students.empty?
-  print_header
-  print(students)
-  print_footer(students)
-end
+interactive_menu
