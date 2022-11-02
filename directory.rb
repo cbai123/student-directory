@@ -23,7 +23,17 @@ def print_header
 end
 
 def print(names)
-  names.each { |name| puts "#{name[:name]} (#{name[:cohort]} cohort)" }
+  puts "Would you like to search for students whose name: begins with a specific letter (1), is less than 12 characters (2), or print all names (3)?"
+  answer = gets.chomp.to_i
+  if answer == 1
+    puts "Enter a letter"
+    letter = gets.chomp
+    names.each_with_index { |name,index| if name[:name][0] == letter then puts "#{index + 1}. #{name[:name]} (#{name[:cohort]} cohort)" end }
+  elsif answer = 2
+    names.each_with_index { |name,index| if name[:name].length  < 12 then puts "#{index + 1}. #{name[:name]} (#{name[:cohort]} cohort)" end }
+  else
+    names.each_with_index { |name,index| puts "#{index + 1}. #{name[:name]} (#{name[:cohort]} cohort)" }
+  end
 end
 
 def print_footer(names)
