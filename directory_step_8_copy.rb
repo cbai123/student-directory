@@ -46,12 +46,21 @@ def print_header
   puts "-------------".center(50)
 end
 
+#def print(names)
+#  i = 0
+#  while i < names.length
+#    puts "#{i + 1}. #{names[i][:name]} cohort: #{names[i][:cohort]}".center(50)
+#    i += 1
+#  end
+#end
+
 def print(names)
-  i = 0
-  while i < names.length
-    puts "#{i + 1}. #{names[i][:name]} cohort: #{names[i][:cohort]}".center(50)
-    i += 1
-  end
+  names_sorted = {}
+  names.map { |name| 
+    if names_sorted[name[:cohort]].nil? then names_sorted[name[:cohort]] = [] end
+    names_sorted[name[:cohort]] << name[:name]
+    }
+  names_sorted.each{|cohort,names| puts "#{cohort}:\n\n"; puts names; puts "-----"}
 end
 
 def print_footer(names)
