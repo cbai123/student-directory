@@ -32,7 +32,7 @@ def input_students
     puts "Height: "; height = gets.chomp
     # push student hash to student array
     students << { name: name, cohort: cohort, hobby: hobby, birth: birth, height: height }
-    puts "now we have #{students.count} students"
+    students.length == 1 ? (puts "now we have #{students.count} student") : (puts "now we have #{students.count} students")
     # get next name
     puts "Enter name:"
     name = gets.chomp
@@ -46,25 +46,29 @@ def print_header
   puts "-------------".center(50)
 end
 
-#def print(names)
-#  i = 0
-#  while i < names.length
-#    puts "#{i + 1}. #{names[i][:name]} cohort: #{names[i][:cohort]}".center(50)
-#    i += 1
-#  end
-#end
-
 def print(names)
   names_sorted = {}
   names.map { |name| 
     if names_sorted[name[:cohort]].nil? then names_sorted[name[:cohort]] = [] end
     names_sorted[name[:cohort]] << name[:name]
     }
-  names_sorted.each{|cohort,names| puts "#{cohort}:\n\n"; puts names; puts "-----"}
+  names_sorted.each{ |cohort,names| 
+    i = 0
+    puts "#{cohort}:\n".center(50)
+    while i < names.length
+      puts names[0].center(50)
+      i += 1
+    end
+    puts "---".center(50)
+  }
 end
 
 def print_footer(names)
-  puts "Overall, we have #{names.count} great students".center(50)
+  if names.length == 1
+    puts "Overall, we have #{names.count} great student".center(50)
+  else
+    puts "Overall, we have #{names.count} great students".center(50)
+  end
 end
 
 students = input_students
