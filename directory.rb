@@ -1,3 +1,4 @@
+require 'CSV'
 @students = []
 
 def input_students
@@ -87,12 +88,10 @@ def load_students(filename = "students.csv")
   filename = STDIN.gets.chomp
   if filename.empty? then filename = "students.csv" end
   puts "loading students from #{filename}"
-  file = File.open(filename,"r")
-  file.readlines.each { |line| 
-    name, cohort = line.chomp.split(",")
-    add_student(name,cohort)
+  CSV.foreach(filename) {|line|
+      name, cohort = line
+      add_student(name,cohort)
   }
-  file.close
 end
 
 def save_students
@@ -100,15 +99,15 @@ def save_students
   filename = STDIN.gets.chomp
   if filename.empty? then filename = "students.csv" end
   puts "saving students to #{filename}"
-  # open the file for writing
-  file = File.open("students.csv", "w")
-  # iterate over the array of students
-  @students.each { |student|
-    student_data = [student[:name], student[:cohort]]
-    csv_line = student_data.join(",")
-    file.puts csv_line
+    # open the file for writing
+    CSV.open(filename, "wb") { |line|
+    # iterate over the array of students
+    @students.each { |student|
+      student_data = [student[:name], student[:cohort]]
+      #csv_line = student_data.join(",")
+      line.puts student_data
+    }
   }
-  file.close
 end
 
 try_load_students
